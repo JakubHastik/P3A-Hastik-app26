@@ -61,7 +61,7 @@
             padding: 0 20px;
         }
 
-        /* Mřížka produktů */
+        /* Mřížka produktů upravená pro čistě textové karty */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -82,12 +82,6 @@
 
         .product-card:hover {
             transform: translateY(-5px);
-        }
-
-        .product-img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
         }
 
         .product-info {
@@ -116,6 +110,8 @@
             justify-content: space-between;
             align-items: center;
             margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px dashed #e2e8f0;
         }
 
         .product-price {
@@ -214,7 +210,7 @@
         footer {
             text-align: center;
             padding: 20px;
-            margin-top: 5px;
+            margin-top: 20px;
             font-size: 0.9rem;
             color: #666;
         }
@@ -276,41 +272,35 @@
     </footer>
 
     <script>
-        // Pole pro ukládání načtených produktů
         let productsData = [];
 
-        // Funkce pro načtení a parsování CSV souboru
+        // Funkce pro načtení CSV souboru (nyní bez sloupečku pro obrázek)
         async function loadProducts() {
             try {
                 const response = await fetch('produkty.csv');
                 const data = await response.text();
                 
-                // Rozdělení na řádky
                 const lines = data.split('\n');
                 const container = document.getElementById('products-container');
-                container.innerHTML = ''; // Vyčištění placeholderu
+                container.innerHTML = '';
 
-                // Přeskočíme první řádek (hlavičku)
                 for (let i = 1; i < lines.length; i++) {
                     if (lines[i].trim() === '') continue;
                     
-                    // Jednoduchý parse CSV řádku
                     const columns = lines[i].split(',');
                     const product = {
                         id: columns[0],
                         name: columns[1],
                         description: columns[2],
-                        price: parseInt(columns[3]),
-                        image: columns[4]
+                        price: parseInt(columns[3])
                     };
                     
                     productsData.push(product);
 
-                    // Vytvoření HTML karty produktu
+                    // HTML karta bez tagu <img>
                     const card = document.createElement('div');
                     card.className = 'product-card';
                     card.innerHTML = `
-                        <img src="${product.image}" alt="${product.name}" class="product-img">
                         <div class="product-info">
                             <div class="product-name">${product.name}</div>
                             <div class="product-desc">${product.description}</div>
@@ -328,7 +318,7 @@
             }
         }
 
-        // Funkce pro přepočet celkové ceny a počtu kusů
+        // Přepočet košíku
         function updateTotals() {
             let totalItems = 0;
             let totalPrice = 0;
@@ -350,11 +340,10 @@
             document.getElementById('total-price').innerText = totalPrice + ' Kč';
         }
 
-        // Zpracování odeslání formuláře (Generování mailto)
+        // Odeslání na e-mail přes mailto
         document.getElementById('order-form').addEventListener('submit', function(e) {
-            e.preventDefault(); // Zamezí obnovení stránky
+            e.preventDefault();
 
-            // Kontrola, zda je v košíku vůbec nějaké zboží
             let orderItemsText = "";
             let totalItems = 0;
             let totalPrice = 0;
@@ -378,12 +367,10 @@
                 return;
             }
 
-            // Načtení údajů o zákazníkovi
             const name = document.getElementById('customer-name').value;
             const email = document.getElementById('customer-email').value;
             const tel = document.getElementById('customer-tel').value;
 
-            // Sestavení textu e-mailu (Sumarizace objednávky podle bodu 3.g)
             const targetEmail = "app@kostka-skola.cz";
             const subject = encodeURIComponent("Nová objednávka - Zahrady Hastíků");
             
@@ -402,11 +389,9 @@
 
             const body = encodeURIComponent(bodyText);
 
-            // Spuštění e-mailového klienta přes mailto link
             window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
         });
 
-        // Spuštění načítání produktů při otevření stránky
         window.onload = loadProducts;
     </script>
 </body>
