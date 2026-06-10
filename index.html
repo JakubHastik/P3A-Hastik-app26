@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zahrady Hastíků | E-shop</title>
     <style>
-        /* Barevná paleta vycházející z dodaného loga */
+        /* Barevná paleta vycházející z loga */
         :root {
             --dark-green: #1e5622;
             --light-green: #86d800;
@@ -30,22 +30,22 @@
         header {
             background-color: var(--white);
             border-bottom: 4px solid var(--dark-green);
-            padding: 20px;
+            padding: 30px 20px;
             text-align: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        .logo-placeholder {
-            max-width: 180px;
-            height: auto;
-            margin-bottom: 10px;
-        }
-
         h1 {
             color: var(--dark-green);
-            font-size: 2rem;
+            font-size: 2.2rem;
             text-transform: uppercase;
             letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: #556b2f;
+            font-size: 1.1rem;
         }
 
         h2 {
@@ -61,7 +61,7 @@
             padding: 0 20px;
         }
 
-        /* Mřížka produktů upravená pro čistě textové karty */
+        /* Čistě textová mřížka */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -72,23 +72,16 @@
         .product-card {
             background: var(--white);
             border-radius: 8px;
-            overflow: hidden;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             border: 1px solid #e2e8f0;
             transition: transform 0.2s;
             display: flex;
             flex-direction: column;
+            padding: 20px;
         }
 
         .product-card:hover {
             transform: translateY(-5px);
-        }
-
-        .product-info {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
         }
 
         .product-name {
@@ -101,7 +94,7 @@
         .product-desc {
             font-size: 0.9rem;
             color: #556b2f;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             flex-grow: 1;
         }
 
@@ -109,8 +102,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: auto;
-            padding-top: 10px;
+            padding-top: 15px;
             border-top: 1px dashed #e2e8f0;
         }
 
@@ -121,11 +113,12 @@
         }
 
         .qty-input {
-            width: 60px;
-            padding: 5px;
+            width: 65px;
+            padding: 6px;
             border: 1px solid var(--dark-green);
             border-radius: 4px;
             text-align: center;
+            font-size: 1rem;
         }
 
         /* Sekce objednávky */
@@ -210,7 +203,7 @@
         footer {
             text-align: center;
             padding: 20px;
-            margin-top: 20px;
+            margin-top: 30px;
             font-size: 0.9rem;
             color: #666;
         }
@@ -219,7 +212,6 @@
 <body>
 
     <header>
-        <img src="logo.png" alt="Zahrady Hastíků Logo" class="logo-placeholder" onerror="this.style.display='none'">
         <h1>Zahrady Hastíků</h1>
         <p>Okrasné rostliny a stromky pro vaši vysněnou zahradu</p>
     </header>
@@ -274,7 +266,7 @@
     <script>
         let productsData = [];
 
-        // Funkce pro načtení CSV souboru (nyní bez sloupečku pro obrázek)
+        // Načtení čistě 4 sloupců (id, name, description, price)
         async function loadProducts() {
             try {
                 const response = await fetch('produkty.csv');
@@ -289,25 +281,22 @@
                     
                     const columns = lines[i].split(',');
                     const product = {
-                        id: columns[0],
-                        name: columns[1],
-                        description: columns[2],
-                        price: parseInt(columns[3])
+                        id: columns[0].trim(),
+                        name: columns[1].trim(),
+                        description: columns[2].trim(),
+                        price: parseInt(columns[3].trim())
                     };
                     
                     productsData.push(product);
 
-                    // HTML karta bez tagu <img>
                     const card = document.createElement('div');
                     card.className = 'product-card';
                     card.innerHTML = `
-                        <div class="product-info">
-                            <div class="product-name">${product.name}</div>
-                            <div class="product-desc">${product.description}</div>
-                            <div class="product-bottom">
-                                <div class="product-price">${product.price} Kč</div>
-                                <input type="number" class="qty-input" data-id="${product.id}" min="0" value="0" onchange="updateTotals()">
-                            </div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-desc">${product.description}</div>
+                        <div class="product-bottom">
+                            <div class="product-price">${product.price} Kč</div>
+                            <input type="number" class="qty-input" data-id="${product.id}" min="0" value="0" onchange="updateTotals()">
                         </div>
                     `;
                     container.appendChild(card);
